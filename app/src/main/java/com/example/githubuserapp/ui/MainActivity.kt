@@ -3,28 +3,21 @@ package com.example.githubuserapp.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.githubuserapp.adapter.UserAdapter
-import com.example.githubuserapp.data.response.GithubResponse
 import com.example.githubuserapp.data.response.ItemsItem
-import com.example.githubuserapp.data.retrofit.ApiConfig
 import com.example.githubuserapp.databinding.ActivityMainBinding
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.githubuserapp.model.MainViewModel
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity(), UserAdapter.OnItemClickListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var userAdapter: UserAdapter
-
-    companion object {
-        private const val TAG = "MainActivity"
-    }
+    private val mainViewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,16 +32,25 @@ class MainActivity : AppCompatActivity(), UserAdapter.OnItemClickListener {
 
         with(binding) {
             searchView.setupWithSearchBar(searchBar)
-            searchView
-                .editText
-                .setOnEditorActionListener { _, _, _ ->
-                    val query = searchView.text.toString()
-                    searchBar.text = query
-                    searchView.hide()
-                    searchUsers(query)
-                    Toast.makeText(this@MainActivity, searchView.text, Toast.LENGTH_SHORT).show()
-                    false
-                }
+            searchView.editText.setOnEditorActionListener { _, _, _ ->
+                val query = searchView.text.toString()
+                searchBar.text = query
+                searchView.hide()
+                mainViewModel.searchUsers(query)
+                true
+            }
+        }
+
+        mainViewModel.listUserGithub.observe(this){
+            listUserGithub -> setGithubData(listUserGithub)
+        }
+
+        mainViewModel.isLoading.observe(this) {
+            showLoading(it)
+        }
+
+        mainViewModel.snackbarText.observe(this) {
+            Snackbar.make(window.decorView.rootView, it, Snackbar.LENGTH_SHORT).show()
         }
 
         userAdapter = UserAdapter(object : UserAdapter.OnItemClickListener {
@@ -59,65 +61,14 @@ class MainActivity : AppCompatActivity(), UserAdapter.OnItemClickListener {
             }
         })
         binding.rvUsers.adapter = userAdapter
-
-        getUser()
     }
+
+
 
     override fun onItemClick(user: ItemsItem) {
         val intent = Intent(this, DetailActivity::class.java)
         intent.putExtra("USERNAME", user.login)
         startActivity(intent)
-    }
-
-    private fun getUser() {
-        showLoading(true)
-        val client = ApiConfig.getApiService().getUser()
-        client.enqueue(object : Callback<GithubResponse> {
-            override fun onResponse(
-                call: Call<GithubResponse>,
-                response: Response<GithubResponse>
-            ) {
-                showLoading(false)
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null) {
-                        setGithubData(responseBody.items)
-                    }
-                } else {
-                    Log.e(TAG, "onFailure: ${response.message()}")
-                }
-            }
-            override fun onFailure(call: Call<GithubResponse>, t: Throwable) {
-                showLoading(false)
-                Log.e(TAG, "onFailure: ${t.message}")
-            }
-        })
-    }
-
-    private fun searchUsers(query: String) {
-        showLoading(true)
-        ApiConfig.getApiService().getSearchUsers(query)
-            .enqueue(object : Callback<GithubResponse> {
-                override fun onResponse(
-                    call: Call<GithubResponse>,
-                    response: Response<GithubResponse>
-                ) {
-                    showLoading(false)
-                    if (response.isSuccessful) {
-                        val responseBody = response.body()
-                        if (responseBody != null) {
-                            setGithubData(responseBody.items)
-                        }
-                    } else {
-                        Log.e(TAG, "onFailure: ${response.message()}")
-                    }
-                }
-
-                override fun onFailure(call: Call<GithubResponse>, t: Throwable) {
-                    showLoading(false)
-                    Log.e(TAG, "onFailure: ${t.message}")
-                }
-            })
     }
 
     private fun setGithubData(user: List<ItemsItem>) {

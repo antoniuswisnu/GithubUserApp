@@ -2,30 +2,23 @@ package com.example.githubuserapp.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.githubuserapp.R
 import com.example.githubuserapp.adapter.FollowersAdapter
-import com.example.githubuserapp.data.response.ItemsItem
-import com.example.githubuserapp.data.retrofit.ApiConfig
 import com.example.githubuserapp.databinding.FragmentFollowersBinding
-import com.example.githubuserapp.model.MainViewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.githubuserapp.model.DetailViewModel
 
 class FollowersFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var followersAdapter: FollowersAdapter
-    private lateinit var mainViewModel: MainViewModel
+    private lateinit var detailViewModel: DetailViewModel
 
     private var _binding: FragmentFollowersBinding? = null
     private val binding get() = _binding!!
@@ -33,11 +26,18 @@ class FollowersFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+        detailViewModel = ViewModelProvider(requireActivity())[DetailViewModel::class.java]
 
-        mainViewModel.username.observe(viewLifecycleOwner) { username ->
+        detailViewModel.username.observe(viewLifecycleOwner) { username ->
             getFollowersData(username)
         }
+
+        detailViewModel.followerList.observe(viewLifecycleOwner) { followersList ->
+            followersList?.let {
+                followersAdapter.submitList(it)
+            }
+        }
+
     }
 
     @SuppressLint("MissingInflatedId")
@@ -64,36 +64,10 @@ class FollowersFragment : Fragment() {
         adapter = FollowersAdapter()
     }
 
-    private fun getFollowersData(username: String){
-        showLoading(true)
-        val client = ApiConfig.getApiService().getFollowers(username)
-        client.enqueue(object : Callback<List<ItemsItem>> {
-            override fun onResponse(
-                call: Call<List<ItemsItem>>,
-                response: Response<List<ItemsItem>>
-            ) {
-                if (response.isSuccessful) {
-                    showLoading(false)
-                    Log.e("USERNAME",username)
-                    val followersList = response.body()
-                    if(followersList != null){
-                        setFollowersData(followersList)
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<List<ItemsItem>>, t: Throwable) {
-                showLoading(false)
-                Log.e("TAG", "Gagal ambil data followers - onFailure: ${t.message}")
-                Toast.makeText(requireContext(), "Gagal memuat data: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+    private fun getFollowersData(username: String) {
+        showLoading(false)
+        detailViewModel.getFollowersData(username)
     }
-
-    private fun setFollowersData(followersList: List<ItemsItem>){
-        followersAdapter.submitList(followersList)
-    }
-
 
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {

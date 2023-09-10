@@ -9,8 +9,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imgDetailUser"
-        android:layout_width="296dp"
-        android:layout_height="296dp"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
         android:layout_marginTop="16dp"
         android:padding="10dp"
         android:src="@drawable/ic_launcher_background"
@@ -123,11 +123,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tabs" />
-
-<!--    <include-->
-<!--        layout="@layout/fragment_follow"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/tabs" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

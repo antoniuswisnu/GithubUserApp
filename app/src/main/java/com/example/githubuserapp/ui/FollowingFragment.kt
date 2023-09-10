@@ -2,30 +2,23 @@ package com.example.githubuserapp.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.githubuserapp.R
 import com.example.githubuserapp.adapter.FollowingAdapter
-import com.example.githubuserapp.data.response.ItemsItem
-import com.example.githubuserapp.data.retrofit.ApiConfig
 import com.example.githubuserapp.databinding.FragmentFollowingBinding
-import com.example.githubuserapp.model.MainViewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.githubuserapp.model.DetailViewModel
 
 class FollowingFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var followingAdapter: FollowingAdapter
-    private lateinit var mainViewModel: MainViewModel
+    private lateinit var detailViewModel: DetailViewModel
 
     private var _binding: FragmentFollowingBinding? = null
     private val binding get() = _binding!!
@@ -33,10 +26,16 @@ class FollowingFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+        detailViewModel = ViewModelProvider(requireActivity())[DetailViewModel::class.java]
 
-        mainViewModel.username.observe(viewLifecycleOwner) { username ->
+        detailViewModel.username.observe(viewLifecycleOwner) { username ->
             getFollowingData(username)
+        }
+
+        detailViewModel.followingList.observe(viewLifecycleOwner) { followingList ->
+            followingList?.let {
+                followingAdapter.submitList(it)
+            }
         }
     }
 
@@ -64,36 +63,10 @@ class FollowingFragment : Fragment() {
         adapter = FollowingAdapter()
     }
 
-    private fun getFollowingData(username: String){
-        showLoading(true)
-        val client = ApiConfig.getApiService().getFollowing(username)
-        client.enqueue(object : Callback<List<ItemsItem>> {
-            override fun onResponse(
-                call: Call<List<ItemsItem>>,
-                response: Response<List<ItemsItem>>
-            ) {
-                if (response.isSuccessful) {
-                    showLoading(false)
-                    Log.e("USERNAME",username)
-                    val followingList = response.body()
-                    if(followingList != null){
-                        setFollowingData(followingList)
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<List<ItemsItem>>, t: Throwable) {
-                showLoading(false)
-                Log.e("TAG", "Gagal ambil data following - onFailure: ${t.message}")
-                Toast.makeText(requireContext(), "Gagal memuat data: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+    private fun getFollowingData(username: String) {
+        showLoading(false)
+        detailViewModel.getFollowingData(username)
     }
-
-    private fun setFollowingData(followingList: List<ItemsItem>){
-        followingAdapter.submitList(followingList)
-    }
-
 
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {

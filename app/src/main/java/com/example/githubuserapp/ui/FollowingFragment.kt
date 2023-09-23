@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.githubuserapp.R
 import com.example.githubuserapp.adapter.FollowingAdapter
 import com.example.githubuserapp.databinding.FragmentFollowingBinding
-import com.example.githubuserapp.model.DetailViewModel
+import com.example.githubuserapp.model.detail.DetailViewModel
 
 class FollowingFragment : Fragment() {
 
@@ -30,6 +30,10 @@ class FollowingFragment : Fragment() {
 
         detailViewModel.username.observe(viewLifecycleOwner) { username ->
             getFollowingData(username)
+        }
+
+        detailViewModel.isLoading.observe(this) {
+            showLoading(it)
         }
 
         detailViewModel.followingList.observe(viewLifecycleOwner) { followingList ->

@@ -10,6 +10,8 @@ data class GithubResponse(
 
 data class ItemsItem(
 
+	val id: Int?,
+
 	@field:SerializedName("login")
 	val login: String,
 

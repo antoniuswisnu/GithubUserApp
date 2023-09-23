@@ -1,8 +1,6 @@
-package com.example.githubuserapp.model
+package com.example.githubuserapp.model.detail
 
 import android.util.Log
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,12 +11,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DetailViewModel : ViewModel(){
+class DetailViewModel() : ViewModel(){
 
     private val _username = MutableLiveData<String>()
+
     val username: LiveData<String> get() = _username
 
     private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
 
     private val _detailUser = MutableLiveData<DetailResponse>()
     val detailUser: LiveData<DetailResponse> = _detailUser

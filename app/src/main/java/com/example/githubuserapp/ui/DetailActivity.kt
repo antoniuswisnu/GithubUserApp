@@ -88,8 +88,6 @@ class DetailActivity : AppCompatActivity() {
             }
         }
 
-
-
         var isChecked = false
         CoroutineScope(Dispatchers.IO).launch {
             val count = viewModel.checkUser(id)

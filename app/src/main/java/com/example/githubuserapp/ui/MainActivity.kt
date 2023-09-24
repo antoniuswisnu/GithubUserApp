@@ -9,13 +9,19 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.githubuserapp.R
 import com.example.githubuserapp.adapter.UserAdapter
 import com.example.githubuserapp.data.response.ItemsItem
 import com.example.githubuserapp.databinding.ActivityMainBinding
+import com.example.githubuserapp.helper.SettingPreferences
+import com.example.githubuserapp.helper.dataStore
+import com.example.githubuserapp.model.main.MainModelFactory
 import com.example.githubuserapp.model.main.MainViewModel
+import com.example.githubuserapp.model.main.SettingViewModel
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity(), UserAdapter.OnItemClickListener {
@@ -69,6 +75,20 @@ class MainActivity : AppCompatActivity(), UserAdapter.OnItemClickListener {
             }
         })
         binding.rvUsers.adapter = userAdapter
+
+        val pref = SettingPreferences.getInstance(application.dataStore)
+        val mainViewModel = ViewModelProvider(
+            this,
+            MainModelFactory(pref)
+        )[SettingViewModel::class.java]
+
+        mainViewModel.getThemeSettings().observe(this) { isDarkModeActive: Boolean ->
+            if (isDarkModeActive) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
+        }
     }
 
     override fun onItemClick(user: ItemsItem) {

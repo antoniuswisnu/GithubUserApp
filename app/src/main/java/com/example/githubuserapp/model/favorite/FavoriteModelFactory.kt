@@ -13,6 +13,7 @@ class FavoriteModelFactory(application: Application) : AndroidViewModel(applicat
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
+
     companion object {
         private lateinit var userDb: FavoriteRoomDatabase
     }
@@ -23,6 +24,9 @@ class FavoriteModelFactory(application: Application) : AndroidViewModel(applicat
     }
 
     fun getFavoriteUser(): LiveData<List<FavoriteUser>>? {
-        return userDao?.getFavoriteUser()
+        _isLoading.value = true
+        val listUser = userDao?.getFavoriteUser()
+        _isLoading.value = false
+        return listUser
     }
 }

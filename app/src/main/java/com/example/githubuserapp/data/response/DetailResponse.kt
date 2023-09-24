@@ -19,4 +19,7 @@ data class DetailResponse(
 	@field:SerializedName("name")
 	val name: String,
 
+	@field:SerializedName("html_url")
+	val htmlUrl: String,
+
 )

@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toolbar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -24,7 +23,6 @@ class MainActivity : AppCompatActivity(), UserAdapter.OnItemClickListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var userAdapter: UserAdapter
     private val mainViewModel by viewModels<MainViewModel>()
-    private var toolbar: Toolbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,7 +108,4 @@ class MainActivity : AppCompatActivity(), UserAdapter.OnItemClickListener {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-
-
 }

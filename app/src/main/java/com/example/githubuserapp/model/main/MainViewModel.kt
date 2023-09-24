@@ -4,13 +4,9 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
 import com.example.githubuserapp.data.response.GithubResponse
 import com.example.githubuserapp.data.response.ItemsItem
 import com.example.githubuserapp.data.retrofit.ApiConfig
-import com.example.githubuserapp.helper.SettingPreferences
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

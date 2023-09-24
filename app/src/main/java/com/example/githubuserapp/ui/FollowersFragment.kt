@@ -32,7 +32,7 @@ class FollowersFragment : Fragment() {
             getFollowersData(username)
         }
 
-        detailViewModel.isLoading.observe(this) {
+        detailViewModel.isLoading.observe(viewLifecycleOwner) {
             showLoading(it)
         }
 

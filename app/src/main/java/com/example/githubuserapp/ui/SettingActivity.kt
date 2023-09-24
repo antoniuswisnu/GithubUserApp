@@ -5,12 +5,10 @@ import android.os.Bundle
 import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
-import com.example.githubuserapp.R
 import com.example.githubuserapp.databinding.ActivitySettingBinding
 import com.example.githubuserapp.helper.SettingPreferences
 import com.example.githubuserapp.helper.dataStore
 import com.example.githubuserapp.model.main.MainModelFactory
-import com.example.githubuserapp.model.main.MainViewModel
 import com.example.githubuserapp.model.main.SettingViewModel
 
 class SettingActivity : AppCompatActivity() {

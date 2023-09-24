@@ -1,5 +1,6 @@
 package com.example.githubuserapp.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -31,7 +32,6 @@ class DetailActivity : AppCompatActivity() {
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        Log.e("DetailActivity", "onCreate() called")
         val username = intent.getStringExtra("USERNAME")
         val avatarUrl = intent.getStringExtra("AVATAR_URL")
 
@@ -62,8 +62,33 @@ class DetailActivity : AppCompatActivity() {
             }
         }.attach()
 
-        var viewModel: FavoriteViewModel = ViewModelProvider(this)[FavoriteViewModel::class.java]
+        val viewModel: FavoriteViewModel = ViewModelProvider(this)[FavoriteViewModel::class.java]
         val id = intent.getIntExtra("ID", 0)
+
+        binding.imgShareUrl.setOnClickListener {
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, "Check out this awesome developer @${username}, ${detailViewModel.detailUser.value?.htmlUrl}")
+                type = "text/plain"
+            }
+            Toast.makeText(this, "Share to", Toast.LENGTH_SHORT).show()
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+        }
+
+        binding.imgBack.setOnClickListener {
+            Intent(this, MainActivity::class.java).also {
+                startActivity(it)
+            }
+        }
+
+        binding.imgSetting.setOnClickListener {
+            Intent(this, SettingActivity::class.java).also {
+                startActivity(it)
+            }
+        }
+
+
 
         var isChecked = false
         CoroutineScope(Dispatchers.IO).launch {
@@ -87,12 +112,12 @@ class DetailActivity : AppCompatActivity() {
             isChecked = !isChecked
             if (isChecked) {
                 viewModel.addToFavorite(username.toString(), id, avatarUrl.toString())
-                Toast.makeText(this, "Added to Favorite", Toast.LENGTH_SHORT).show()
                 binding.fab.setBackgroundResource(R.drawable.ic_favorite_fill)
+                Toast.makeText(this, "$username Added to Favorite", Toast.LENGTH_SHORT).show()
             } else {
                 viewModel.removeFromFavorite(id)
-                Toast.makeText(this, "Removed from Favorite", Toast.LENGTH_SHORT).show()
                 binding.fab.setBackgroundResource(R.drawable.ic_favorite_border)
+                Toast.makeText(this, "$username Removed from Favorite", Toast.LENGTH_SHORT).show()
             }
             binding.fab.isChecked = isChecked
         }

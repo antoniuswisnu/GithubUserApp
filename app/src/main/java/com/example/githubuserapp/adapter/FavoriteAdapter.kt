@@ -11,7 +11,7 @@ import com.example.githubuserapp.data.response.ItemsItem
 import com.example.githubuserapp.databinding.ItemUserBinding
 import com.example.githubuserapp.helper.FavoriteDiffCallback
 
-class FavoriteAdapter(private var ListUser: List<ItemsItem>) :
+class FavoriteAdapter(private var listUser: List<ItemsItem>) :
     RecyclerView.Adapter<FavoriteAdapter.ListViewHolder>() {
         private lateinit var onItemClickCallback: OnItemClickCallback
 
@@ -25,7 +25,7 @@ class FavoriteAdapter(private var ListUser: List<ItemsItem>) :
         }
 
         override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-            val user = ListUser[position]
+            val user = listUser[position]
             val photo = user.avatarUrl
             val username = user.login
 
@@ -35,17 +35,18 @@ class FavoriteAdapter(private var ListUser: List<ItemsItem>) :
                 .load(photo)
                 .into(holder.binding.imgUser)
 
-            holder.itemView.setOnClickListener { onItemClickCallback.onItemClicked(ListUser[holder.adapterPosition]) }
+            holder.itemView.setOnClickListener {
+                onItemClickCallback.onItemClicked(listUser[holder.adapterPosition])
+            }
         }
 
-        override fun getItemCount(): Int = ListUser.size
+        override fun getItemCount(): Int = listUser.size
         @SuppressLint("NotifyDataSetChanged")
         fun setList(it: ArrayList<ItemsItem>) {
-            val diffUtil = FavoriteDiffCallback(ListUser as ArrayList<ItemsItem>, it)
+            val diffUtil = FavoriteDiffCallback(listUser as ArrayList<ItemsItem>, it)
             val diffResults = DiffUtil.calculateDiff(diffUtil)
-            ListUser = it
+            listUser = it
             diffResults.dispatchUpdatesTo(this)
-            Log.d("FavoriteAdapter", "LIST DI DALAM ADAPTER : $ListUser")
         }
 
         class ListViewHolder(var binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root)

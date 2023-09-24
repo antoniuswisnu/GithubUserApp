@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -48,13 +47,10 @@ class FavoriteUserActivity : AppCompatActivity() {
         binding.rvUsersFavorite.addItemDecoration(itemDecoration)
         binding.rvUsersFavorite.adapter = listAdapter
 
-        Log.d("FavoriteUserActivity","RV USER : "+binding.rvUsersFavorite.adapter.toString())
-
         viewModel.getFavoriteUser()?.observe(this) {
             if (it != null) {
                 val list = mapList(it)
                 listAdapter.setList(list)
-                Log.d("FavoriteUserActivity", "LIST DI DALAM : $list")
             }
         }
 
@@ -67,9 +63,18 @@ class FavoriteUserActivity : AppCompatActivity() {
             elevation = 0f
             setDisplayHomeAsUpEnabled(true)
         }
-        Log.d("FavoriteUserActivity","Favorite adapter"+FavoriteAdapter(ArrayList()).itemCount.toString())
-        Log.d("FavoriteUserActivity","List adapter"+listAdapter.itemCount.toString())
-        Log.d("FavoriteUserActivity","ViewModel getFavorite User : "+viewModel.getFavoriteUser()?.value.toString())
+
+        binding.imgBack.setOnClickListener {
+            Intent(this, MainActivity::class.java).also {
+                startActivity(it)
+            }
+        }
+
+        binding.imgSetting.setOnClickListener {
+            Intent(this, SettingActivity::class.java).also {
+                startActivity(it)
+            }
+        }
     }
 
     private fun mapList(users: List<FavoriteUser>): ArrayList<ItemsItem> {
@@ -80,7 +85,6 @@ class FavoriteUserActivity : AppCompatActivity() {
             )
             listUsers.add(userMapped)
         }
-        Log.d("FavoriteUserActivity",listUsers.toString())
         return listUsers
     }
 
